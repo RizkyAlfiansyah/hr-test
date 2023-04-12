@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Input from '../components/input';
 import SelectIput from '../components/select';
 import { useForm } from '../hooks/useForm';
@@ -15,6 +15,13 @@ function App() {
   const _handleSubmit = () => {
     localStorage.setItem('data', JSON.stringify(state));
   };
+
+  useEffect(() => {
+    const data = localStorage.getItem('data');
+    if (data) {
+      setData(JSON.parse(data));
+    }
+  }, []);
 
   return (
     <div className="w-full h-screen flex bg-slate-200">
@@ -75,10 +82,10 @@ function App() {
             </thead>
             <tbody>
               <tr>
-                <td>John Doe</td>
-                <td>JohnDoe@gmail.com</td>
-                <td>Active</td>
-                <td>Admin</td>
+                <td>{data.name}</td>
+                <td>{data.email}</td>
+                <td>{data.status}</td>
+                <td>{data.role}</td>
                 <td className="flex gap-2">
                   <button className="bg-blue-500 text-white rounded-md px-2 py-1">
                     Edit
