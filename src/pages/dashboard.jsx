@@ -13,7 +13,7 @@ function App() {
   });
 
   const _handleSubmit = () => {
-    console.log('state', state);
+    localStorage.setItem('data', JSON.stringify(state));
   };
 
   return (
@@ -21,6 +21,7 @@ function App() {
       <div className="w-1/2 flex justify-center items-start px-4 py-20 bg-gray-300">
         <div className="w-full flex flex-col gap-4 bg-white rounded-md p-4">
           <Input
+            name="name"
             label="Name"
             type="text"
             placeholder="Name"
@@ -28,32 +29,30 @@ function App() {
             onChange={handleFormChange}
           />
           <Input
+            name="email"
             label="Email"
             type="Email"
             placeholder="Email"
             value={state.email}
             onChange={handleFormChange}
           />
-          <SelectIput
-            value={state.status}
+          <Input
+            name="status"
             label="Status"
-            placeholder="Role"
-            optionList={[
-              { value: '1', label: 'Active' },
-              { value: '2', label: 'Inactive' },
-            ]}
+            type="text"
+            placeholder="Statue"
+            value={state.status}
             onChange={handleFormChange}
           />
-          <SelectIput
-            value={state.role}
+          <Input
+            name="role"
             label="Role"
+            type="text"
             placeholder="Role"
-            optionList={[
-              { value: '1', label: 'Admin' },
-              { value: '2', label: 'User' },
-            ]}
+            value={state.role}
             onChange={handleFormChange}
           />
+
           <button
             className="w-28 text-white rounded-md p-2 text-center bg-green-600 float-right"
             onClick={_handleSubmit}
