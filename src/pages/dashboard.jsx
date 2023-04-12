@@ -4,8 +4,9 @@ import SelectIput from '../components/select';
 import { useForm } from '../hooks/useForm';
 
 function App() {
-  const [data, setData] = useState([]);
-  const { state, handleFormChange } = useForm({
+  const [data, setData] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const { state, handleFormChange, resetForm } = useForm({
     name: '',
     email: '',
     status: '',
@@ -13,7 +14,15 @@ function App() {
   });
 
   const _handleSubmit = () => {
+    setSuccess((prev) => !prev);
     localStorage.setItem('data', JSON.stringify(state));
+    resetForm();
+  };
+
+  const _handleDelete = () => {
+    localStorage.removeItem('data');
+    setData(null);
+    setSuccess((prev) => !prev);
   };
 
   useEffect(() => {
@@ -21,7 +30,7 @@ function App() {
     if (data) {
       setData(JSON.parse(data));
     }
-  }, []);
+  }, [success]);
 
   return (
     <div className="w-full h-screen flex bg-slate-200">
@@ -81,20 +90,25 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>{data.name}</td>
-                <td>{data.email}</td>
-                <td>{data.status}</td>
-                <td>{data.role}</td>
-                <td className="flex gap-2">
-                  <button className="bg-blue-500 text-white rounded-md px-2 py-1">
-                    Edit
-                  </button>
-                  <button className="bg-red-500 text-white rounded-md px-2 py-1">
-                    Delete
-                  </button>
-                </td>
-              </tr>
+              {data && (
+                <tr>
+                  <td>{data.name}</td>
+                  <td>{data.email}</td>
+                  <td>{data.status}</td>
+                  <td>{data.role}</td>
+                  <td className="flex gap-2">
+                    <button className="bg-blue-500 text-white rounded-md px-2 py-1">
+                      Edit
+                    </button>
+                    <button
+                      className="bg-red-500 text-white rounded-md px-2 py-1"
+                      onClick={_handleDelete}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
