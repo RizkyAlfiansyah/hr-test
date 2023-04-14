@@ -4,8 +4,7 @@ import SelectIput from '../components/select';
 import { useForm } from '../hooks/useForm';
 
 function App() {
-  const [data, setData] = useState(null);
-  const [success, setSuccess] = useState(false);
+  const [data, setData] = useState([]);
   const { state, handleFormChange, resetForm } = useForm({
     name: '',
     email: '',
@@ -14,15 +13,22 @@ function App() {
   });
 
   const _handleSubmit = () => {
-    setSuccess((prev) => !prev);
-    localStorage.setItem('data', JSON.stringify(state));
+    let values = [];
+    const datas = JSON.parse(localStorage.getItem('data'));
+    if (datas) {
+      values = [...datas, state];
+    } else {
+      values = [state];
+    }
+    localStorage.setItem('data', JSON.stringify(values));
     resetForm();
   };
 
-  const _handleDelete = () => {
-    localStorage.removeItem('data');
-    setData(null);
-    setSuccess((prev) => !prev);
+  const _handleDelete = (value) => {
+    const datas = JSON.parse(localStorage.getItem('data'));
+    datas.splice(value, 1);
+    localStorage.setItem('data', JSON.stringify(datas));
+    setData(datas);
   };
 
   useEffect(() => {
@@ -30,7 +36,7 @@ function App() {
     if (data) {
       setData(JSON.parse(data));
     }
-  }, [success]);
+  }, [localStorage.getItem('data')]);
 
   return (
     <div className="w-full h-screen flex bg-slate-200">
@@ -78,10 +84,11 @@ function App() {
         </div>
       </div>
       <div className="w-1/2 flex px-4 py-20 flex-col gap-4 justify-start items-start overflow-auto">
-        <div className="w-full h-48 bg-white rounded-md p-4">
+        <div className="w-full min-h-48 bg-white rounded-md p-4">
           <table className="w-full">
             <thead>
               <tr>
+                <th className="text-left">No.</th>
                 <th className="text-left">Name</th>
                 <th className="text-left">Email</th>
                 <th className="text-left">Status</th>
@@ -90,25 +97,28 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {data && (
-                <tr>
-                  <td>{data.name}</td>
-                  <td>{data.email}</td>
-                  <td>{data.status}</td>
-                  <td>{data.role}</td>
-                  <td className="flex gap-2">
-                    <button className="bg-blue-500 text-white rounded-md px-2 py-1">
-                      Edit
-                    </button>
-                    <button
-                      className="bg-red-500 text-white rounded-md px-2 py-1"
-                      onClick={_handleDelete}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              )}
+              {data?.length > 0
+                ? data.map((item, idx) => (
+                    <tr key={idx}>
+                      <td>{idx + 1}</td>
+                      <td>{item.name}</td>
+                      <td>{item.email}</td>
+                      <td>{item.status}</td>
+                      <td>{item.role}</td>
+                      <td className="flex gap-2">
+                        <button className="bg-blue-500 text-white rounded-md px-2 py-1">
+                          Edit
+                        </button>
+                        <button
+                          className="bg-red-500 text-white rounded-md px-2 py-1"
+                          onClick={() => _handleDelete(idx)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                : null}
             </tbody>
           </table>
         </div>
